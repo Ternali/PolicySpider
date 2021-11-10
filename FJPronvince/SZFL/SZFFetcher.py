@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 import json
-import time
 import pymysql
 from bs4 import BeautifulSoup
 import requests
@@ -20,7 +19,7 @@ class SZFFetcher:
         并且更新最新的政策标题。
         is_first用于标志是否首次读抓取该网站文件比较重要用于判断是否终止抓取。
         """
-        with open("record.json", "r") as f:
+        with open("record.json", "r", encoding="utf8") as f:
             self.newest_policy_title = json.loads(f.read())["newest_policy_title"]
             if self.newest_policy_title is None:
                 self.is_first = True
@@ -61,17 +60,32 @@ class SZFFetcher:
                                           Chrome/94.0.4606.71 Safari/537.36 '
         }  # 请求头部，用于最基本的反爬如果失败则立即停止说明目标文件非公开
         api_url = "http://www.fj.gov.cn/ssp/search/api/apiSearch?"
+
         preview_data = requests.get(url=api_url, params=params, headers=headers).json()  # 初次请求用于判断是否需要爬取，必要
         if not self.is_first:  # 并非初次抓取政策文件，需要对政策文件是否有必要向后抓取进行判断
             if preview_data["datas"][0]["_doctitle"] == self.newest_policy_title:
                 exit(1)  # 说明政策文件还未更新，不具备向后抓取的条件
+
+        first_title_flag = True  # 用于判断是否需要将获取到的标题记录为最新政策标题
+        first_title_recorder = ""  # 用于记录最新政策标题
+
         while True:
             preview_data = requests.get(url=api_url, params=params, headers=headers).json()  # 正式开始爬取内容
+            if preview_data["error"] or preview_data["datas"] == []:  # 初次爬取需要判断什么时候停止向后抓取政策
+                self.renew_op(first_title_recorder)
+                exit(1)  # 退出当前进程
+
             # 获取当前页面下的政策列表信息
             for policy_info in preview_data["datas"]:  # 对于每一条政策信息存储
+                if first_title_flag:
+                    first_title_recorder = policy_info["_doctitle"]  # 更新最新政策标题
+                    first_title_flag = False  # 并将标识符置为False后续无需更新
+
                 if not self.is_first:  # 对于并非首次抓取政策文件，需要对政策文件判断什么时候停止向后抓取政策
                     if policy_info["_doctitle"] == self.newest_policy_title:
-                        pass  # 退出向后抓取需要执行的后续操作
+                        self.renew_op(first_title_recorder)  # 退出向后抓取需要执行的后续操作
+                        exit(1)  # 退出当前进程
+
                 response = requests.get(url=policy_info["docpuburl"], headers=headers)
                 bs = BeautifulSoup(response.content.decode("utf8"), 'lxml')
                 content_docker = bs.find("div", {"class": "TRS_Editor"}).find_all("p")  # 找到class为TRS_Editor的p标签
@@ -80,8 +94,7 @@ class SZFFetcher:
                     if part_content.text is not None:  # 对于所有非空p标签抽取内容文本以组合
                         content_builder += part_content.text
                 self.insert_data(policy_info, content_builder)
-                break
-            break
+
             params["page"] += 1  # 向后一页抓取内容
 
     def insert_data(self, info: json, content: str):
@@ -100,6 +113,20 @@ class SZFFetcher:
         VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)''', info_tuple)  # 向远端数据库插入数据
         self.db.commit()
         cursor.close()  # 游标对象关闭
+
+    def renew_op(self, newest_policy_title):
+        """
+        爬取结束后更新record.json将最新政策标题插入进去，原先的loc_file功能实在过于臃肿不应该再添加善后工作
+        :param newest_policy_title: 最新的政策标题
+        :return:
+        """
+        tmp_json = {
+            "newest_policy_title": newest_policy_title
+        }
+        results = json.dumps(tmp_json, indent=4, ensure_ascii=False)
+        f = open("record.json", "w", encoding="utf8")
+        f.write(results)
+        f.close()
 
 
 if __name__ == "__main__":
@@ -131,4 +158,3 @@ if __name__ == "__main__":
     f.write(results)
     f.close()
     """
-
