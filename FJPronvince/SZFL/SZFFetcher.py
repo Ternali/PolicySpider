@@ -79,6 +79,9 @@ class SZFFetcher:
                 for part_content in content_docker:
                     if part_content.text is not None:  # 对于所有非空p标签抽取内容文本以组合
                         content_builder += part_content.text
+                self.insert_data(policy_info, content_builder)
+                break
+            break
             params["page"] += 1  # 向后一页抓取内容
 
     def insert_data(self, info: json, content: str):
@@ -88,11 +91,15 @@ class SZFFetcher:
         :param content: 对应政策的具体文本内容
         :return:
         """
+        info_tuple = (info["_doctitle"], info["idxid"], info["puborg"], info["fileno"], info["pubdate"],
+                      info["docreltime"], content, info["docpuburl"], info["puborg"])
         cursor = self.db.cursor()  # 创建游标对象
+        cursor.execute('USE knowledge')
         cursor.execute('''INSERT INTO 
         dpp_policy(title, policy_index, public_unit, issued_number, public_time, complete_time, content, url, source)
-        VALUES('%S, %S, %S, %S, %S, %S, %S, %S, %S' % (info["doc_title"]))
-        ''')
+        VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)''', info_tuple)  # 向远端数据库插入数据
+        self.db.commit()
+        cursor.close()  # 游标对象关闭
 
 
 if __name__ == "__main__":
