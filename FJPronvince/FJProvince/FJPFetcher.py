@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 import json
-import re
+import time
 
 import pymysql
 from bs4 import BeautifulSoup
@@ -34,7 +34,7 @@ class SZFFetcher:
                 user='root',
                 password='haodong'
             )
-        except Exception as e:
+        except pymysql.err.OperationalError as e:
             exit("连接数据库失败")
 
     def loc_policy(self):
@@ -78,6 +78,8 @@ class SZFFetcher:
             print("正在抓取第" + str(params["page"]) + "页政策列表")  # 打印爬取页数便于Debugger(
             # 获取当前页面下的政策列表信息
             for policy_info in preview_data["datas"]:  # 对于每一条政策信息存储
+                if policy_info["doctype"] == 40:
+                    continue  # 对于非超文本的文档类型丢弃例如pdf，页面可能会直接加载pdf而非html这部分无法处理需要抛弃
 
                 if first_title_flag:
                     first_title_recorder = policy_info["_doctitle"]  # 更新最新政策标题
@@ -89,14 +91,15 @@ class SZFFetcher:
                         exit(1)  # 退出当前进程
 
                 response = requests.get(url=policy_info["docpuburl"], headers=headers)
-                bs = BeautifulSoup(response.content.decode("utf8"), 'lxml')
+                bs = BeautifulSoup(response.text.encode(response.encoding), 'lxml')
+
                 content_docker = bs.find_all("p")  # 找到所有的p标签对内容进行过滤
                 content_builder = ""  # 构造内容文本字符串
                 for part_content in content_docker:
                     if part_content.text is not None:  # 对于所有非空p标签抽取内容文本以组合
                         content_builder += part_content.text
                 self.insert_data(policy_info, content_builder)
-
+            time.sleep(1)
             params["page"] += 1  # 向后一页抓取内容
 
     def insert_data(self, info: json, content: str):
@@ -106,9 +109,12 @@ class SZFFetcher:
         :param content: 对应政策的具体文本内容
         :return:
         """
-        print("正在抓取:    " + info["doctitle"])
+        if "idxid" not in info or "fileno" not in info:  # 如果文件不存在政策索引甚至发文字号不视为政策文件
+            return
+        print("正在抓取:    " + info["docpuburl"])
         info_tuple = (info["_doctitle"], info["idxid"], info["puborg"], info["fileno"], info["pubdate"],
                       info["docreltime"], content, info["docpuburl"], info["puborg"])
+        content.encode("utf-8")
         cursor = self.db.cursor()  # 创建游标对象
         cursor.execute('USE knowledge')
         try:
@@ -138,5 +144,18 @@ class SZFFetcher:
 
 
 if __name__ == "__main__":
+    """
+    results = requests.get(url="http://scjgj.fujian.gov.cn/zw/tzgg/202010/t20201009_5404945.htm?ivk_sa=1024320u")
+    print(results.encoding)
+    bs = BeautifulSoup(results.text.encode(results.encoding), 'lxml')
+    p_docker = bs.find_all("p")
+    content_builder = ""
+    for p in p_docker:
+        if p.text is not None:
+            content_builder += p.text
+    with open("results.txt", "w", encoding="utf-8") as f:
+        f.write(content_builder)
+    exit(1)
+    """
     tmp = SZFFetcher()
     tmp.loc_policy()
