@@ -1,10 +1,11 @@
 # -*- coding:utf-8 -*-
 import json
 import time
-
+import lxml
 import pymysql
 from bs4 import BeautifulSoup
 import requests
+from lxml import etree, html
 
 """
 大致方法划分为初次定位文件、非初次定位文件、捕获文件涉及到文件爬取需要更新问题，现需决定将爬取到的最新文
@@ -34,6 +35,14 @@ class SZFFetcher:
                 user='root',
                 password='haodong'
             )
+            """
+            # 警告: 本部分代码仅适用于测试时删除无用数据
+            cursor = self.db.cursor()
+            cursor.execute("USE knowledge")
+            cursor.execute("DELETE FROM dpp_policy")
+            self.db.commit()
+            exit(1)
+            """
         except pymysql.err.OperationalError as e:
             exit("连接数据库失败")
 
@@ -63,6 +72,7 @@ class SZFFetcher:
         api_url = "http://www.fj.gov.cn/ssp/search/api/apiSearch?"
 
         preview_data = requests.get(url=api_url, params=params, headers=headers).json()  # 初次请求用于判断是否需要爬取，必要
+
         if not self.is_first:  # 并非初次抓取政策文件，需要对政策文件是否有必要向后抓取进行判断
             if preview_data["datas"][0]["_doctitle"] == self.newest_policy_title:
                 exit(1)  # 说明政策文件还未更新，不具备向后抓取的条件
@@ -93,12 +103,17 @@ class SZFFetcher:
                 response = requests.get(url=policy_info["docpuburl"], headers=headers)
                 bs = BeautifulSoup(response.text.encode(response.encoding), 'lxml')
 
-                content_docker = bs.find_all("p")  # 找到所有的p标签对内容进行过滤
+                content_docker = bs.find_all({"h1", "h2", "h3", "h4", "h5", "h6", "p"})  # 找到所有的p和h标签对内容进行过滤
                 content_builder = ""  # 构造内容文本字符串
+                dinner_begin = False  # 表示”正餐“是否开始，即是否正文内容仅能支持过滤掉部分内容
                 for part_content in content_docker:
-                    if part_content.text is not None:  # 对于所有非空p标签抽取内容文本以组合
-                        content_builder += part_content.text
-                self.insert_data(policy_info, content_builder)
+                    if policy_info["_doctitle"] in part_content.text:
+                        dinner_begin = True  # 正文即将开始
+                    if dinner_begin:
+                        if part_content.text is not None:  # 对于所有非空p标签抽取内容文本以组合
+                            content_builder += part_content.text
+                if content_builder != "":  # 对于爬取到的非空才执行插入数据库操作
+                    self.insert_data(policy_info, content_builder)
             time.sleep(1)
             params["page"] += 1  # 向后一页抓取内容
 
@@ -113,14 +128,15 @@ class SZFFetcher:
             return
         print("正在抓取:    " + info["docpuburl"])
         info_tuple = (info["_doctitle"], info["idxid"], info["puborg"], info["fileno"], info["pubdate"],
-                      info["docreltime"], content, info["docpuburl"], info["puborg"])
+                      info["docreltime"], content, info["docpuburl"], info["puborg"], "福建")
         content.encode("utf-8")
         cursor = self.db.cursor()  # 创建游标对象
         cursor.execute('USE knowledge')
         try:
             cursor.execute('''INSERT INTO 
-            dpp_policy(title, policy_index, public_unit, issued_number, public_time, complete_time, content, url, source)
-            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)''', info_tuple)  # 向远端数据库插入数据
+            dpp_policy(title, policy_index, public_unit, issued_number, public_time, complete_time, content, url, 
+                source, province)
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''', info_tuple)  # 向远端数据库插入数据
         except pymysql.err.DataError:
             print("编码存在一定转换问题放弃抓取")
             cursor.close()
@@ -145,15 +161,19 @@ class SZFFetcher:
 
 if __name__ == "__main__":
     """
-    results = requests.get(url="http://scjgj.fujian.gov.cn/zw/tzgg/202010/t20201009_5404945.htm?ivk_sa=1024320u")
-    print(results.encoding)
-    bs = BeautifulSoup(results.text.encode(results.encoding), 'lxml')
-    p_docker = bs.find_all("p")
-    content_builder = ""
-    for p in p_docker:
-        if p.text is not None:
-            content_builder += p.text
-    with open("results.txt", "w", encoding="utf-8") as f:
+    response = requests.get("http://zrzyt.fujian.gov.cn/zwgk/zfxxgkzl/zfxxgkml/jsxmydsp/202111/t20211105_5768520.htm")
+    bs = BeautifulSoup(response.text.encode(response.encoding), 'lxml')
+
+    content_docker = bs.find_all({"h1", "h2", "h3", "h4", "h5", "h6", "p"})  # 找到所有的p标签对内容进行过滤
+    content_builder = ""  # 构造内容文本字符串
+    begin = False
+    for part_content in content_docker:
+        if part_content.text == "福建省人民政府关于安溪县2021年度第六批次农用地转用和土地征收的批复":
+            begin = True
+        if begin:
+            if part_content.text is not None:  # 对于所有非空p标签抽取内容文本以组合
+                content_builder += part_content.text
+    with open("results.txt", "w", encoding="utf8") as f:
         f.write(content_builder)
     exit(1)
     """
