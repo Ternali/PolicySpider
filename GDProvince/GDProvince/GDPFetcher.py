@@ -137,16 +137,16 @@ class SZFFetcher:
         if "identifier" not in info or "document_number" not in info:  # 如果文件不存在政策索引甚至发文字号不视为政策文件
             return
         print("正在抓取:    " + info["post_url"])
-        return  # 测试能否通过检验
+        # return  # 测试能否通过检验
         info_tuple = (info["title"], info["identifier"], info["publisher"], info["document_number"], info["pub_time"],
-                      "", content, info["post_url"], info["publisher"], "广东")
+                      info["pub_time"], content, info["post_url"], info["publisher"], "广东")
         content.encode("utf-8")
         cursor = self.db.cursor()  # 创建游标对象
         cursor.execute('USE knowledge')
         try:
             cursor.execute('''INSERT INTO 
-            dpp_policy(title, policy_index, public_unit, issued_number, public_time, complete_time, content, url, 
-                source, province)
+            dpp_policy(title, policy_index, public_unit, issued_number, 
+            public_time, complete_time, content, url, source, province)
                 VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)''', info_tuple)  # 向远端数据库插入数据
         except pymysql.err.DataError:
             print("编码存在一定转换问题放弃抓取")
