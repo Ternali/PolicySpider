@@ -109,11 +109,17 @@ class SZFFetcher:
         if "xxgkindexcode" in info:
             xxgkindexcode = info["xxgkindexcode"]
         compaltedate = ""  # 解析成文时间，将时间戳转为%Y-%m-%d格式
-        if "compaltedate" in info:
-            compaltedate = time.strftime(time.strftime("%Y-%m-%d", time.localtime(float(info["compaltedate"][0:10]))))
+        if "compaltedate" in info and "compaltedate" != '':
+            try:
+                compaltedate = time.strftime(time.strftime("%Y-%m-%d", time.localtime(float(info["compaltedate"][0:10]))))
+            except Exception:
+                return
         deploytime = ""  # 解析发文时间，将时间转成同样的格式
-        if "deploytime" in info:
-            deploytime = time.strftime(time.strftime("%Y-%m-%d", time.localtime(float(info["deploytime"][0:10]))))
+        if "deploytime" in info and "deploytime" != '':
+            try:
+                deploytime = time.strftime(time.strftime("%Y-%m-%d", time.localtime(float(info["deploytime"][0:10]))))
+            except Exception:
+                return
 
         info_tuple = (info["title"], xxgkindexcode, fbjg, filenumber,
                       deploytime, compaltedate, content, info["url"], fbjg, "浙江")
