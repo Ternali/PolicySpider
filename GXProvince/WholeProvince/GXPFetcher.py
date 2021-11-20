@@ -63,7 +63,7 @@ class SZFFetcher:
         api_url = "http://www.gxzf.gov.cn/igs/front/search/list.html?"
 
         requests.packages.urllib3.disable_warnings()  # 部分网站SSL问题，忽略
-        year_params = ["2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021"]  # 设置爬取年份集合
+        year_params = ["2019", "2020", "2021"]  # 设置爬取年份集合
 
         for i in range(0, len(year_params)):
             params["filter[fileYear]"] = year_params[i]   # 设置爬取年份参数
@@ -89,6 +89,9 @@ class SZFFetcher:
 
                 if preview_data is None:
                     continue  # 如果请求返回结果为空则放弃
+
+                if not preview_data["page"]["content"]:
+                    break
 
                 print("正在爬取第" + str(params["pageNumber"]) + "页")
                 for each_policy in preview_data["page"]["content"]:
