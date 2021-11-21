@@ -76,48 +76,53 @@ class SZFFetcher:
         # print(response.status_code)
         # exit(1)
 
-        for j in range(0, len(key_params)):
-            for i in range(0, len(year_params)):
-                params["historySearchWords"] = [key_params[j]]
-                params["searchWord"] = key_params[j]
-                params["pageNo"] = 1  # 重置爬取开始页数
-                while True:
-                    preview_data = None
-                    try:  # 开始爬取政策列表，由于浙江提供了对应的content值是完整的所以不需要跳转对应位置文本过滤
-                        requests.adapters.DEFAULT_RETRIES = 20  # 设置重连次数
-                        s = requests.session()
-                        s.keep_alive = False  # 设置连接活跃状态
-                        preview_data = requests.post(url=api_url, data=json.dumps(params), headers=headers)  # 开始爬取政策列表
-                        # 测试代码使用
-                        """""
-                        with open("success.json", "w", encoding="utf-8") as f:
-                            result = json.dumps(preview_data.json(), indent=4, ensure_ascii=False)
-                            f.write(result)
-                        exit(1)
-                        """
-                        preview_data = preview_data.json()
-                    except Exception:
-                        time.sleep(1)
-                        params["pageNo"] += 1  # 向后爬取
-                        continue
-
-                    if preview_data is None:
-                        params["pageNo"] += 1  # 向后爬取
-                        continue  # 如果请求返回结果为空则放弃
-
-                    if not preview_data["success"]:  # 说明该部分内容结束
-                        break
-
-                    print("正在爬取第" + str(params["pageNo"]) + "页，文件类型为" + params["searchWord"])
-                    for each_policy in preview_data["data"]["middle"]["list"]:
-                        try:
-                            response = requests.get(each_policy["url"])
-                            results = trafilatura.process_record(response.content.decode("utf-8"))
-                            self.insert_data(each_policy, year_params[i], results)
-                        except Exception:
-                            continue
-                    params["pageNo"] += 1  # 向后面爬取
+        for j in range(1, len(key_params)):
+            params["historySearchWords"] = [key_params[j]]
+            params["searchWord"] = key_params[j]
+            params["pageNo"] = 1  # 重置爬取开始页数
+            while True:
+                preview_data = None
+                try:  # 开始爬取政策列表，由于浙江提供了对应的content值是完整的所以不需要跳转对应位置文本过滤
+                    requests.adapters.DEFAULT_RETRIES = 20  # 设置重连次数
+                    s = requests.session()
+                    s.keep_alive = False  # 设置连接活跃状态
+                    preview_data = requests.post(url=api_url, data=json.dumps(params), headers=headers)  # 开始爬取政策列表
+                    # 测试代码使用
+                    """""
+                    with open("success.json", "w", encoding="utf-8") as f:
+                        result = json.dumps(preview_data.json(), indent=4, ensure_ascii=False)
+                        f.write(result)
+                    exit(1)
+                    """
+                    preview_data = preview_data.json()
+                except Exception:
                     time.sleep(1)
+                    params["pageNo"] += 1  # 向后爬取
+                    continue
+
+                if preview_data is None:
+                    params["pageNo"] += 1  # 向后爬取
+                    continue  # 如果请求返回结果为空则放弃
+
+                if not preview_data["success"]:  # 说明该部分内容结束
+                    print("对应类型文件爬取结束，类型为" + params["searchWord"])
+                    break
+
+                if not preview_data["data"]["middle"]["list"]:
+                    print("对应类型文件爬取结束，类型为" + params["searchWord"])
+                    break
+
+                print("正在爬取第" + str(params["pageNo"]) + "页，文件类型为" + params["searchWord"])
+                for each_policy in preview_data["data"]["middle"]["list"]:
+                    try:
+                        response = requests.get(each_policy["url"])
+                        results = trafilatura.process_record(response.content.decode("utf-8"))
+                        self.insert_data(each_policy, "", results)
+                    except Exception:
+                        continue
+                params["pageNo"] += 1  # 向后面爬取
+                time.sleep(1)
+
 
     def insert_data(self, info: json, year: str, content: str):
         """
