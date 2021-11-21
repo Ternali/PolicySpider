@@ -1,0 +1,6 @@
+{
+    "code": 487,
+    "data": null,
+    "msg": "查询ES数据出错！",
+    "sysErrorMsg": "Elasticsearch exception [type=search_phase_execution_exception, reason=all shards failed]"
+}

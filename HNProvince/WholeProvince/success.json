@@ -1,0 +1,213 @@
+{
+    "code": 200,
+    "data": {
+        "totalNum": 10000,
+        "info": [
+            {
+                "docId": "2fe956a5ace248ecbd9f968d2e556336",
+                "orgInfo": [
+                    "河南省发展和改革委员会"
+                ],
+                "pubDateInfo": "2021-03-22",
+                "title": "关于印发2021年河南省数字经济发展工作方案的<span style='color:red'>通知</span>",
+                "url": "http://fgw.henan.gov.cn/2021/03-22/2112607.html",
+                "normalTitle": "关于印发2021年河南省数字经济发展工作方案的通知"
+            },
+            {
+                "docId": "d602d1afdbe14dc58af57ff5e513e5b8",
+                "orgInfo": [
+                    "河南省医疗保障局",
+                    "河南省人力资源和社会保障厅"
+                ],
+                "pubDateInfo": "2021-03-22",
+                "title": "河南省医疗保障局河南省人力资源和社会保障厅关于执行《国家基本医疗保险、工伤保险和生育保险药品目录（2020年）》的<span style='color:red'>通知</span>",
+                "url": "http://ylbz.henan.gov.cn/2021/03-22/2112895.html",
+                "normalTitle": "河南省医疗保障局河南省人力资源和社会保障厅关于执行《国家基本医疗保险、工伤保险和生育保险药品目录（2020年）》的通知"
+            },
+            {
+                "docId": "1c3d74aea97a4301820f4add2e3adc0d",
+                "orgInfo": [
+                    "河南省应急管理厅"
+                ],
+                "pubDateInfo": "2021-03-22",
+                "title": "河南省应急管理厅关于开展应急MV视频作品大赛的<span style='color:red'>通知</span>",
+                "url": "http://yjglt.henan.gov.cn/2021/03-22/2112892.html",
+                "normalTitle": "河南省应急管理厅关于开展应急MV视频作品大赛的通知"
+            },
+            {
+                "docId": "a57a95477e3e4777b9eb9fefd49a5558",
+                "orgInfo": [
+                    "河南省文物局"
+                ],
+                "pubDateInfo": "2021-03-22",
+                "title": "关于开展我省历代名人墓保护展示利用工作的<span style='color:red'>通知</span>（豫文物保〔2021〕49号）",
+                "url": "http://wwj.henan.gov.cn/2021/03-22/2113252.html",
+                "normalTitle": "关于开展我省历代名人墓保护展示利用工作的通知（豫文物保〔2021〕49号）"
+            },
+            {
+                "docId": "86965f19b9424f4193af5e00e0c3ad41",
+                "orgInfo": [
+                    "河南省生态环境厅"
+                ],
+                "pubDateInfo": "2021-03-19",
+                "title": "关于进一步做好排污许可管理工作的<span style='color:red'>通知</span>",
+                "url": "http://sthjt.henan.gov.cn/2021/03-19/2111952.html",
+                "normalTitle": "关于进一步做好排污许可管理工作的通知"
+            },
+            {
+                "docId": "5a5dc6e612c14ad79a759f99fd95a0b8",
+                "orgInfo": [
+                    "河南省司法厅"
+                ],
+                "pubDateInfo": "2021-03-19",
+                "title": "河南省法治政府建设领导小组办公室关于公布全省服务型行政执法典型案例的<span style='color:red'>通知</span>",
+                "url": "http://sft.henan.gov.cn/2021/03-19/2112098.html",
+                "normalTitle": "河南省法治政府建设领导小组办公室关于公布全省服务型行政执法典型案例的通知"
+            },
+            {
+                "docId": "62188a7e3abb4526a2548e4378f3523d",
+                "orgInfo": [
+                    "河南省农业农村厅"
+                ],
+                "pubDateInfo": "2021-03-19",
+                "title": "河南省经济作物推广站关于印发2021年花生生产技术指导意见的<span style='color:red'>通知</span>",
+                "url": "http://nynct.henan.gov.cn/2021/03-19/2111835.html",
+                "normalTitle": "河南省经济作物推广站关于印发2021年花生生产技术指导意见的通知"
+            },
+            {
+                "docId": "2500c99e01c74205958a3c95d190fe4d",
+                "orgInfo": [
+                    "河南省广播电视局"
+                ],
+                "pubDateInfo": "2021-03-19",
+                "title": "省广播电视局关于印发《广播电视网络安全管理办法》《广播电视网络安全事件应急预案》的<span style='color:red'>通知</span>",
+                "url": "http://gd.henan.gov.cn/2021/03-19/2112249.html",
+                "normalTitle": "省广播电视局关于印发《广播电视网络安全管理办法》《广播电视网络安全事件应急预案》的通知"
+            },
+            {
+                "docId": "6831b94e15fa4ac291599a9b9e87984e",
+                "orgInfo": [
+                    "河南省教育厅",
+                    "河南省财政厅",
+                    "河南省人力资源和社会保障厅"
+                ],
+                "pubDateInfo": "2021-03-19",
+                "title": "河南省人力资源和社会保障厅河南省教育厅河南省财政厅关于对河南省职业教育教学专家进行综合考核的<span style='color:red'>通知</span>",
+                "url": "http://hrss.henan.gov.cn/2021/03-19/2112214.html",
+                "normalTitle": "河南省人力资源和社会保障厅河南省教育厅河南省财政厅关于对河南省职业教育教学专家进行综合考核的通知"
+            },
+            {
+                "docId": "e4d9df657f174885bd291e93f37ed1e5",
+                "orgInfo": [
+                    "河南省人力资源和社会保障厅"
+                ],
+                "pubDateInfo": "2021-03-18",
+                "title": "河南省人力资源和社会保障厅关于印发《河南省人力资源社会保障“双随机、一公开”监管随机抽查事项清单（2021年版）》的<span style='color:red'>通知</span>",
+                "url": "http://hrss.henan.gov.cn/2021/03-18/2111181.html",
+                "normalTitle": "河南省人力资源和社会保障厅关于印发《河南省人力资源社会保障“双随机、一公开”监管随机抽查事项清单（2021年版）》的通知"
+            },
+            {
+                "docId": "a6a831fa159b4e178ec3f89e74e334e2",
+                "orgInfo": [
+                    "河南省发展和改革委员会"
+                ],
+                "pubDateInfo": "2021-03-17",
+                "title": "关于印发河南省2021年补短板“982”工程实施方案的<span style='color:red'>通知</span>",
+                "url": "http://fgw.henan.gov.cn/2021/03-19/2111628.html",
+                "normalTitle": "关于印发河南省2021年补短板“982”工程实施方案的通知"
+            },
+            {
+                "docId": "dd701059fc7a4d17ae42fe6099b3204d",
+                "orgInfo": [
+                    "河南省文化和旅游厅"
+                ],
+                "pubDateInfo": "2021-03-17",
+                "title": "庆祝中国共产党成立100周年·河南省黄河文化主题创作展征稿<span style='color:red'>通知</span>",
+                "url": "http://hct.henan.gov.cn/2021/03-17/2110771.html",
+                "normalTitle": "庆祝中国共产党成立100周年·河南省黄河文化主题创作展征稿通知"
+            },
+            {
+                "docId": "449d8613cb8e41f5b485dca90e2a800e",
+                "orgInfo": [
+                    "河南省文化和旅游厅"
+                ],
+                "pubDateInfo": "2021-03-17",
+                "title": "河南省文化和旅游厅关于开展河南省第十四届群星奖音乐舞蹈大赛、小戏小品（曲艺）大赛评奖工作的<span style='color:red'>通知</span>",
+                "url": "http://hct.henan.gov.cn/2021/03-17/2110550.html",
+                "normalTitle": "河南省文化和旅游厅关于开展河南省第十四届群星奖音乐舞蹈大赛、小戏小品（曲艺）大赛评奖工作的通知"
+            },
+            {
+                "docId": "62adc2e6c1a74d309b5722071fb3b34f",
+                "orgInfo": [
+                    "河南省文化和旅游厅"
+                ],
+                "pubDateInfo": "2021-03-17",
+                "title": "河南省文化和旅游厅转发文化和旅游部办公厅关于加强全国旅游监管服务平台安全管理工作的<span style='color:red'>通知</span>",
+                "url": "http://hct.henan.gov.cn/2021/03-17/2110806.html",
+                "normalTitle": "河南省文化和旅游厅转发文化和旅游部办公厅关于加强全国旅游监管服务平台安全管理工作的通知"
+            },
+            {
+                "docId": "d2091a436a334ea5865da1a1f294462e",
+                "orgInfo": [
+                    "河南省应急管理厅"
+                ],
+                "pubDateInfo": "2021-03-16",
+                "title": "河南省应急管理厅关于印发2021年度安全生产监督检查计划的<span style='color:red'>通知</span>",
+                "url": "http://yjglt.henan.gov.cn/2021/03-16/2110030.html",
+                "normalTitle": "河南省应急管理厅关于印发2021年度安全生产监督检查计划的通知"
+            },
+            {
+                "docId": "b776338dc08049d5a073afe5f2ab1b4d",
+                "orgInfo": [
+                    "河南省人力资源和社会保障厅"
+                ],
+                "pubDateInfo": "2021-03-16",
+                "title": "河南全民技能振兴工程领导小组办公室关于印发《2021年河南全民技能振兴工程暨职业技能提升行动工作方案》的<span style='color:red'>通知</span>",
+                "url": "http://hrss.henan.gov.cn/2021/03-16/2110294.html",
+                "normalTitle": "河南全民技能振兴工程领导小组办公室关于印发《2021年河南全民技能振兴工程暨职业技能提升行动工作方案》的通知"
+            },
+            {
+                "docId": "535436af692b46d6bdae9dcfdc2442ed",
+                "orgInfo": [
+                    "河南省市场监督管理局"
+                ],
+                "pubDateInfo": "2021-03-16",
+                "title": "标题：关于领取2020年度注册计量师职业资格证书的<span style='color:red'>通知</span>",
+                "url": "http://scjg.henan.gov.cn/2021/03-16/2109912.html",
+                "normalTitle": "标题：关于领取2020年度注册计量师职业资格证书的通知"
+            },
+            {
+                "docId": "17dd37ef977240b1abf6bf3a1c9583bb",
+                "orgInfo": [
+                    "河南省人民政府办公厅"
+                ],
+                "pubDateInfo": "2021-03-16",
+                "title": "​河南省人民政府办公厅关于2021年清明节放假安排的<span style='color:red'>通知</span>",
+                "url": "https://dsj.henan.gov.cn/2021/03-16/2110234.html",
+                "normalTitle": "​河南省人民政府办公厅关于2021年清明节放假安排的通知"
+            },
+            {
+                "docId": "98191c7ec90045969f205fa2c5d4bfaa",
+                "orgInfo": [
+                    "国家税务总局"
+                ],
+                "pubDateInfo": "2021-03-15",
+                "title": "国家税务总局关于做好《机动车发票使用办法》实施工作的<span style='color:red'>通知</span>",
+                "url": "https://henan.chinatax.gov.cn/henanchinatax/zcwj/zcfgk/2021031708555985214/index.html",
+                "normalTitle": "国家税务总局关于做好《机动车发票使用办法》实施工作的通知"
+            },
+            {
+                "docId": "757a8a14d06348c59ddb519b8db2139d",
+                "orgInfo": [
+                    "河南省科学技术厅"
+                ],
+                "pubDateInfo": "2021-03-15",
+                "title": "关于集中清退2020年度工程系列正高级工程师和副高级工程师申报材料的<span style='color:red'>通知</span>",
+                "url": "http://kjt.henan.gov.cn/2021/03-15/2109560.html",
+                "normalTitle": "关于集中清退2020年度工程系列正高级工程师和副高级工程师申报材料的通知"
+            }
+        ]
+    },
+    "msg": "请求成功",
+    "sysErrorMsg": ""
+}
