@@ -47,12 +47,13 @@ class SZFFetcher:
         """
 
         params = {
-            "pageNum": 26,
+            "pageNum": 1,
             "pageSize": 15,
             "sort": "time",
             "suitability": 1,
             "position": 1,
-            "searchTag": "zc"
+            "searchTag": "zc",
+            "zcYear": 2019
         }
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)  \
