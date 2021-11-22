@@ -63,7 +63,7 @@ class GWYFetcher:
                       "通报", "报告", "请示", "批复", "议案", "函", "纪要"]
         year_params = [2019, 2020, 2021]
 
-        for y in range(0, len(year_params)):
+        for y in range(2, len(year_params)):
             params["pubtimeyear"] = year_params[y]
             while True:
                 preview_data = None
