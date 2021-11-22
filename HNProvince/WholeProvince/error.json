@@ -1,6 +1,23 @@
 {
-    "code": 487,
-    "data": null,
-    "msg": "查询ES数据出错！",
-    "sysErrorMsg": "Elasticsearch exception [type=search_phase_execution_exception, reason=all shards failed]"
+    "searchResultAll": {
+        "searchProposal": "",
+        "searchTotal": [],
+        "searchCondition": {
+            "allSearchWord": "通知"
+        },
+        "policyList": [],
+        "existInCacheBox": "",
+        "message": "正常状态",
+        "intelligentRecommend": "",
+        "searchLeader": "",
+        "total": "0",
+        "requestId": "00f55d60f5486b665a484f161d6d9410",
+        "recommendWord": "",
+        "serviceList": [],
+        "searchLeaders": "",
+        "thematic": "",
+        "fileList": [],
+        "newsInfo": [],
+        "status": "1000"
+    }
 }
