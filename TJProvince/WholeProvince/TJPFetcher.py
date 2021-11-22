@@ -8,7 +8,7 @@ from requests import adapters
 from requests.packages import urllib3
 import trafilatura
 from selenium import webdriver
-import datetime
+from datetime import datetime
 
 """
 大致方法划分为初次定位文件、非初次定位文件、捕获文件涉及到文件爬取需要更新问题，现需决定将爬取到的最新文
@@ -47,17 +47,21 @@ class SZFFetcher:
         """
 
         params = {
-            "areaCode": "410000",
-            "pageNum": 1,
-            "pageSize": 20,
-            "searchContent": "通知"
+            "index": "zcwj-index-200424",
+            "type": "zcfg",
+            "filter[AVAILABLE]": True,
+            "pageSize": 10,
+            "pageNumber": 1,
+            "orderProperty": "FBRQ",
+            "orderDirection": "desc"
         }
+
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)  \
                                           Chrome/94.0.4606.71 Safari/537.36 ',
-            "Content-Type": "application/json"
+            "Content-Type": "application/json;charset=UTF-8"
         }  # 请求头部，用于最基本的反爬如果失败则立即停止说明目标文件非公开
-        api_url = "https://zcss.hnzwfw.gov.cn/api/search/doc/list"
+        api_url = "http://www.tj.gov.cn/igs/front/search/list.html?"
 
         requests.packages.urllib3.disable_warnings()  # 部分网站SSL问题，忽略
         key_params = ["通知", "决议", "决定", "命令", "公报", "公告", "通告", "意见",
@@ -68,47 +72,52 @@ class SZFFetcher:
         # print(response.status_code)
         # exit(1)
 
-        for j in range(0, len(key_params)):
-            params["searchContent"] = key_params[j]
-            params["pageNum"] = 1  # 重置爬取开始页数
-            while True:
-                preview_data = None
-                try:  # 开始爬取政策列表，由于浙江提供了对应的content值是完整的所以不需要跳转对应位置文本过滤
-                    requests.adapters.DEFAULT_RETRIES = 20  # 设置重连次数
-                    s = requests.session()
-                    s.keep_alive = False  # 设置连接活跃状态
-                    preview_data = requests.post(url=api_url, data=json.dumps(params), headers=headers)  # 开始爬取政策列表
-                    # 测试代码使用
-                    """""
-                    with open("error.json", "w", encoding="utf-8") as f:
-                        result = json.dumps(preview_data.json(), indent=4, ensure_ascii=False)
-                        f.write(result)
-                    exit(1)
-                    """
-                    preview_data = preview_data.json()
-                except Exception:
-                    time.sleep(1)
-                    params["pageNum"] += 1  # 向后爬取
-                    continue
+        while True:
+            preview_data = None
+            try:  # 开始爬取政策列表，由于浙江提供了对应的content值是完整的所以不需要跳转对应位置文本过滤
+                requests.adapters.DEFAULT_RETRIES = 20  # 设置重连次数
+                s = requests.session()
+                s.keep_alive = False  # 设置连接活跃状态
+                preview_data = requests.get(url=api_url, params=params, headers=headers)  # 开始爬取政策列表
+                # 测试代码使用
 
-                if preview_data is None:
-                    params["pageNum"] += 1  # 向后爬取
-                    continue  # 如果请求返回结果为空则放弃
+                """"
+                with open("error.json", "w", encoding="utf-8") as f:
+                    result = json.dumps(preview_data.json(), indent=4, ensure_ascii=False)
+                    f.write(result)
+                exit(1)
+                """
+                if preview_data.text == "":
+                    break  # 返回数据为空说明爬取结束
 
-                if not preview_data["data"]:
-                    print("对应类型文件爬取结束，类型为" + params["searchContent"])
-                    break
-
-                print("正在爬取第" + str(params["pageNum"]) + "页，文件类型为" + params["searchContent"])
-                for each_policy in preview_data["data"]["info"]:
-                    try:
-                        response = requests.get(each_policy["url"])
-                        results = trafilatura.process_record(response.content.decode("utf-8"))
-                        self.insert_data(each_policy, "", results)
-                    except Exception:
-                        continue
-                params["pageNum"] += 1  # 向后面爬取
+                preview_data = preview_data.json()
+            except Exception as e:
+                print(e.__cause__)
                 time.sleep(1)
+                params["pageNumber"] += 1  # 向后爬取
+                continue
+
+            if preview_data is None:
+                break  # 如果请求返回结果为空则放弃，说明结束
+
+            if not preview_data["page"]["content"]:
+                print("对应类型文件爬取结束")
+                break
+
+            print("正在爬取第" + str(params["pageNumber"]) + "页")
+            for each_policy in preview_data["page"]["content"]:
+                try:
+
+                    # response = requests.get(each_policy["DOCPUBURL"])
+                    # results = trafilatura.process_record(response.content.decode("utf-8"))
+                    if "ZW" not in each_policy:
+                        continue
+                    results = each_policy["ZW"]
+                    self.insert_data(each_policy, "", results)
+                except Exception:
+                    continue
+            params["pageNumber"] += 1  # 向后面爬取
+            time.sleep(1)
 
 
     def insert_data(self, info: json, year: str, content: str):
@@ -119,24 +128,42 @@ class SZFFetcher:
         :param content: 对应政策的具体文本内容
         :return:
         """
-        print("正在抓取年份为" + year + " " + info["url"])
+        print("正在抓取年份为" + year + " " + info["DOCPUBURL"])
         # return  # 测试能否通过检验
         publisher = ""  # 提取发文机关
-        if "orgInfo" in info:
-            publisher = info["orgInfo"][0]
+        if "FWJG_name" in info:
+            publisher = info["FWJG_name"]
 
         file_number = "无发文字号"  # 提取发文字号
+        if "FWZH" in info:
+            if info["FWZH"] is None or info["FWZH"] == "":
+                file_number = "无发文字号"
+            else:
+                file_number = info["FWZH"]
 
         policy_id = "无索引号"  # 提取索引号
+        if "IDXID" in info:
+            if info["IDXID"] is None or info["IDXID"] == "":
+                policy_id = "无索引号"
+            else:
+                policy_id = info["IDXID"]
 
         complete_time = "1949-10-01"  # 直接获取成文时间
+        if "CWRQ" in info:
+            if info["CWRQ"] is None or info["CWRQ"] == "":
+                complete_time = "1949-10-01"
+            else:
+                complete_time = info["CWRQ"][0:10]
 
         pub_time = "1949-10-01"  # 直接获取发文时间
-        if "pubDateInfo" in info:
-            pub_time = info["pubDateInfo"]
+        if "FBRQ" in info:
+            if info["FBRQ"] is None or info["FBRQ"] == "":
+                pub_time = "1949-10-01"
+            else:
+                pub_time = info["FBRQ"][0:10]
 
-        info_tuple = (info["normalTitle"], policy_id, publisher, file_number,
-                      pub_time, complete_time, content, info["url"], publisher, "河南")
+        info_tuple = (info["BT"], policy_id, publisher, file_number,
+                      pub_time, complete_time, content, info["DOCPUBURL"], publisher, "天津")
         content.encode("utf-8")
         cursor = self.db.cursor()  # 创建游标对象
         cursor.execute('USE knowledge')
