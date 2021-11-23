@@ -108,26 +108,22 @@ class SZFFetcher:
                     continue
 
                 print("正在爬取第" + str(params["p"]) + "页")
+                policy_counter += len(preview_data)
                 for each_policy in preview_data["result"]:
                     try:
                         bs = BeautifulSoup(each_policy, "html.parser")  # 使用BeautifulSoup纠正格式
                         bs.prettify()
                         title = bs.find("div", attrs={"class": "jcse-news-title zwfwzc_title"}).text  # 查找对应标签
+                        pub_time = bs.find("span", attrs={"class": "jcse-news-date zwfwzc_pubtime"}).text[3:]  # 查找对应标签
                         link = bs.find("a").get('href')  # 获得对应链接并组装
                         link = unquote(link)  # 转换编码
                         link = link.replace("visit/link.do?url=", "")  # 去除无用信息
                         chrome = webdriver.Chrome()
-                        wait = WebDriverWait(chrome, 10)
-                        wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'ivu-card-body')))
+                        element = WebDriverWait(chrome, 30)
+                        # element.until(EC.presence_of_element_located((By.CLASS_NAME, 'ivu-card-body')))
                         chrome.get(link)
                         response = chrome.page_source
-                        with open("f.text", "w") as f:
-                            f.write(response)
-                        exit(1)
                         results = trafilatura.process_record(response)
-                        print(results)
-                        exit(1)
-                        pub_time = bs.find("div", attrs={"class": "jcse-news-date zwfwzc_pubtime"}).text[3:]  # 查找对应标签
                         info = (title, "无索引号", "无发文机关", "无发文字号", pub_time, pub_time, results, link, "河北", "河北")
                         self.insert_data(info)
                     except Exception as e:
