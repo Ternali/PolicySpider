@@ -103,11 +103,10 @@ class SZFFetcher:
                     preview_data = preview_data.json()
                 except Exception as e:
                     print(e.__cause__)
-                    time.sleep(1)
                     params["p"] += 1  # 向后爬取
                     continue
 
-                print("正在爬取第" + str(params["p"]) + "页")
+                print("正在爬取第" + str(params["p"]) + "页，文件类型为" + key_params[k])
                 policy_counter += len(preview_data)
                 for each_policy in preview_data["result"]:
                     try:
@@ -115,11 +114,16 @@ class SZFFetcher:
                         bs.prettify()
                         title = bs.find("div", attrs={"class": "jcse-news-title zwfwzc_title"}).text  # 查找对应标签
                         pub_time = bs.find("span", attrs={"class": "jcse-news-date zwfwzc_pubtime"}).text[3:]  # 查找对应标签
+                        print("正在爬取政策标题为" + title)
                         link = bs.find("a").get('href')  # 获得对应链接并组装
                         link = unquote(link)  # 转换编码
                         link = link.replace("visit/link.do?url=", "")  # 去除无用信息
-                        chrome = webdriver.Chrome()
-                        element = WebDriverWait(chrome, 30)
+                        end = link.find('&')
+                        link = link[:end]
+                        opt = webdriver.ChromeOptions()
+                        opt.add_argument('--headless')
+                        chrome = webdriver.Chrome(options=opt)
+                        # element = WebDriverWait(chrome, 3)
                         # element.until(EC.presence_of_element_located((By.CLASS_NAME, 'ivu-card-body')))
                         chrome.get(link)
                         response = chrome.page_source
